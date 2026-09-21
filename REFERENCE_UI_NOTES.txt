@@ -1,0 +1,11 @@
+REFERENCE-MATCHED VISUAL DIRECTION
+- Dark navy laboratory header and sidebar
+- White rounded dashboard cards
+- Blue active navigation
+- Research-lab typography
+- Green sustainability quote panel
+- Dashboard summary cards and progress sections
+- Mix-wise completion matrix
+- Data-entry specimen cards
+- Graph builder with X-axis, Y-axis, Mix, Molarity and Graph Type controls
+- Mobile responsive layout
