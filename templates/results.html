@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Results</h1><p>Calculated values from laboratory entries.</p></div><a class="outline-btn" href="{{url_for('export')}}">⇩ Download Excel</a></div>
+<section class="panel"><div class="table-wrap"><table class="results"><thead><tr><th>Specimen</th><th>Mix</th><th>Temp</th><th>Rep</th><th>Mass Loss %</th><th>Failure Load kN</th><th>Residual MPa</th><th>Residual %</th><th>Status</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{r.mix_id}}-{{r.temp}}-R{{r.replicate}}</td><td>{{r.mix_id}}</td><td>{{r.temp}}°C</td><td>{{r.replicate}}</td>
+<td>{% if r.pre_mass is not none and r.post_mass is not none and r.pre_mass %}{{"%.2f"|format((r.pre_mass-r.post_mass)/r.pre_mass*100)}}{% else %}—{% endif %}</td>
+<td>{{r.failure_load or "—"}}</td><td>{% if r.failure_load is not none %}{{"%.2f"|format(r.failure_load/10)}}{% else %}—{% endif %}</td>
+<td>{% if r.failure_load is not none and r.baseline_strength %}{{"%.2f"|format((r.failure_load/10)/r.baseline_strength*100)}}{% else %}—{% endif %}</td>
+<td><span class="status {{'done' if r.status=='Completed' else ''}}">{{r.status}}</span></td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

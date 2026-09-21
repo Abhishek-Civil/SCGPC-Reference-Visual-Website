@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Graphs & Analysis</h1><p>Generate research graphs from the entered specimen data.</p></div></div>
+<section class="panel graph-controls"><div class="control-grid">
+<label>X-axis<select id="xaxis"><option value="temp">Temperature</option><option value="scba">SCBA Replacement</option></select></label>
+<label>Y-axis<select id="yaxis"><option value="residual_pct">Residual Compressive Strength (%)</option><option value="residual">Residual Compressive Strength (MPa)</option><option value="mass_loss">Mass Loss (%)</option></select></label>
+<label>Mix<select id="mix"><option value="all">All Mixes</option>{% for m in mixes %}<option>{{m.id}}</option>{% endfor %}</select></label>
+<label>Molarity<select id="molarity"><option value="all">All</option><option>4M</option><option>6M</option></select></label>
+<label>Graph Type<select id="type"><option value="line">Line Chart</option><option value="bar">Bar Chart</option></select></label>
+</div><button class="blue-btn" onclick="makeChart()">GENERATE GRAPH</button></section>
+<section class="panel graph-large"><h2 id="chartTitle">Residual Compressive Strength (%) vs Temperature</h2><canvas id="chart"></canvas></section>
+<div class="quick-grid">
+<div class="quick" onclick="preset('temp','residual_pct')"><b>Residual Strength %</b><span>vs Temperature</span></div>
+<div class="quick" onclick="preset('temp','mass_loss')"><b>Mass Loss</b><span>vs Temperature</span></div>
+<div class="quick" onclick="preset('scba','residual_pct')"><b>SCBA Effect</b><span>Residual Strength %</span></div>
+<div class="quick" onclick="preset('temp','residual')"><b>Residual Strength</b><span>MPa vs Temperature</span></div>
+</div>
+<script>
+let rows=[], chart;
+fetch("{{url_for('api_data')}}").then(r=>r.json()).then(x=>{rows=x;makeChart()});
+function preset(x,y){document.getElementById('xaxis').value=x;document.getElementById('yaxis').value=y;makeChart()}
+function avg(a){let v=a.filter(x=>x!==null&&x!==undefined);return v.length?v.reduce((p,c)=>p+c,0)/v.length:null}
+function makeChart(){
+ if(!rows.length)return;
+ const x=document.getElementById('xaxis').value,y=document.getElementById('yaxis').value,mix=document.getElementById('mix').value,mol=document.getElementById('molarity').value;
+ let rr=rows.filter(r=>(mix==='all'||r.mix===mix)&&(mol==='all'||r.molarity===mol));
+ let labels=[...new Set(rr.map(r=>r[x]))].sort((a,b)=>a-b);
+ let groups=mix==='all' ? [...new Set(rr.map(r=>r.mix))] : [mix];
+ const datasets=groups.map((g,i)=>({label:g,data:labels.map(v=>avg(rr.filter(r=>r.mix===g&&r[x]===v).map(r=>r[y]))),tension:.25}));
+ const ylabel={residual_pct:'Residual Compressive Strength (%)',residual:'Residual Compressive Strength (MPa)',mass_loss:'Mass Loss (%)'}[y];
+ document.getElementById('chartTitle').textContent=ylabel+' vs '+(x==='temp'?'Temperature':'SCBA Replacement');
+ if(chart)chart.destroy();
+ chart=new Chart(document.getElementById('chart'),{type:document.getElementById('type').value,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+</script>
+{% endblock %}

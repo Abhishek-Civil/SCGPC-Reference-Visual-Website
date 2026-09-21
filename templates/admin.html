@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Admin</h1><p>Manage project accounts and access roles.</p></div></div>
+<div class="two"><section class="panel"><h2>Create User</h2><form method="post" class="stack"><input name="display_name" placeholder="Display name" required><input name="username" placeholder="Username" required><input name="password" type="password" placeholder="Password" required><select name="role"><option value="user">Common User</option><option value="editor">Editor</option><option value="superadmin">Super Admin</option></select><button class="blue-btn">Create User</button></form></section>
+<section class="panel"><h2>Existing Users</h2><div class="table-wrap"><table class="results"><tr><th>Name</th><th>Username</th><th>Role</th><th>Action</th></tr>{% for u in users %}<tr><td>{{u.display_name}}</td><td>{{u.username}}</td><td>{{u.role}}</td><td>{% if u.id != me.id %}<form method="post" action="{{url_for('delete_user',uid=u.id)}}"><button class="danger">Delete</button></form>{% else %}Current{% endif %}</td></tr>{% endfor %}</table></div></section></div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Login — SCGPC Research Lab{% endblock %}
+{% block guest %}
+<div class="login-bg"><div class="login-card">
+ <div class="login-icon">🔥</div>
+ <h1>SCGPC FIRE RESISTANCE<br>RESEARCH LAB</h1>
+ <p>Self-Compacting Geopolymer Concrete<br>Experiment • Analyse • Innovate</p>
+ {% with msgs=get_flashed_messages(with_categories=true) %}{% for cat,msg in msgs %}<div class="alert {{cat}}">{{msg}}</div>{% endfor %}{% endwith %}
+ <form method="post">
+  <label>Username</label><input name="username" required autocomplete="username">
+  <label>Password</label><input name="password" type="password" required autocomplete="current-password">
+  <button class="blue-btn">Login</button>
+ </form>
+ <div class="login-help">If you do not have an account, please contact the Project Admin.</div>
+</div></div>
+{% endblock %}

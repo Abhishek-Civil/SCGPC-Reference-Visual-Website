@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Project Details</h1><p>{{project}}</p></div></div>
+<div class="two">
+<section class="panel"><h2>Experimental Configuration</h2>
+<div class="facts"><div><b>Fly Ash : GGBS</b><span>70 : 30</span></div><div><b>SCBA Replacement</b><span>0%, 5%, 10%, 15%, 20%, 25%</span></div><div><b>NaOH Molarity</b><span>4M and 6M</span></div><div><b>Total Mixes</b><span>12</span></div><div><b>Fire Exposure</b><span>200°C, 400°C, 600°C, 800°C</span></div><div><b>Exposure Duration</b><span>2 hours hold + natural cooling</span></div><div><b>Replicates</b><span>3 cubes per condition</span></div><div><b>Total Cubes</b><span>144</span></div></div>
+</section>
+<section class="panel"><h2>Tests & Observations</h2><ul class="clean"><li>Mass loss (%)</li><li>Visual degradation: cracking, spalling, colour change</li><li>Residual compressive strength</li><li>Residual strength (%)</li><li>Comparison against 28-day baseline strength</li></ul></section>
+</div>
+<section class="panel"><h2>Experimental Mix Matrix</h2><div class="mix-cards">{% for m in mixes %}<div><b>{{m.id}}</b><span>{{m.scba}}% SCBA</span><em>{{m.molarity}}</em></div>{% endfor %}</div></section>
+{% endblock %}

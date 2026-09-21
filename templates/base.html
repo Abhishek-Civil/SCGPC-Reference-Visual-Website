@@ -1,1 +1,42 @@
-
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}SCGPC Fire Resistance Research Lab{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+{% if me %}
+<header class="header">
+ <div class="brand"><div class="brandmark">🔥</div><div><div class="brandname">SCGPC FIRE RESISTANCE RESEARCH LAB</div><div class="brandsub">Self-Compacting Geopolymer Concrete | Experiment • Analyse • Innovate</div></div></div>
+ <div class="motto">“Sustainable Materials<br>for a Safer Tomorrow”</div>
+ <div class="account"><span class="avatar">{{me.display_name[:1]|upper}}</span><div><b>{{me.display_name}}</b><small>{{"Super Admin" if me.role=="superadmin" else ("Editor" if me.role=="editor" else "Common User")}}</small></div></div>
+</header>
+<div class="shell">
+<aside class="sidebar">
+ <nav>
+  <a class="{% if request.endpoint=='dashboard' %}active{% endif %}" href="{{url_for('dashboard')}}"><span>⌂</span>Dashboard</a>
+  <a class="{% if request.endpoint=='project_page' %}active{% endif %}" href="{{url_for('project_page')}}"><span>▣</span>Project Details</a>
+  <a class="{% if request.endpoint=='data_entry' %}active{% endif %}" href="{{url_for('data_entry')}}"><span>✎</span>Data Entry</a>
+  <a class="{% if request.endpoint=='graphs' %}active{% endif %}" href="{{url_for('graphs')}}"><span>▥</span>Graphs</a>
+  <a class="{% if request.endpoint=='results' %}active{% endif %}" href="{{url_for('results')}}"><span>▤</span>Results</a>
+  <a class="{% if request.endpoint=='notes' %}active{% endif %}" href="{{url_for('notes')}}"><span>▧</span>Notes</a>
+  <a href="{{url_for('export')}}"><span>⇩</span>Export Data</a>
+  {% if me.role=="superadmin" %}<a class="{% if request.endpoint=='admin' %}active{% endif %}" href="{{url_for('admin')}}"><span>⚙</span>Admin</a>{% endif %}
+  <a href="{{url_for('logout')}}"><span>⇥</span>Logout</a>
+ </nav>
+ <div class="quote">“From Waste<br>to Resilient<br>Structures”</div>
+</aside>
+<main class="main">
+{% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}<div class="alerts">{% for cat,msg in msgs %}<div class="alert {{cat}}">{{msg}}</div>{% endfor %}</div>{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</main>
+</div>
+{% else %}
+{% block guest %}{% endblock %}
+{% endif %}
+</body>
+</html>

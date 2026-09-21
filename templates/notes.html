@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Notes</h1><p>Record observations, experiment reminders and review points.</p></div></div>
+<div class="two"><section class="panel"><h2>Add Note</h2><form method="post" class="stack"><input name="title" placeholder="Note title" required><textarea name="body" placeholder="Write your note..." required></textarea><button class="blue-btn">Add Note</button></form></section>
+<section class="panel"><h2>Saved Notes</h2>{% for n in notes %}<article class="note"><b>{{n.title}}</b><small>{{n.author}} • {{n.created_at}}</small><p>{{n.body}}</p></article>{% else %}<p class="muted">No notes yet.</p>{% endfor %}</section></div>
+{% endblock %}

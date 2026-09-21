@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block content %}
+<div class="page-head"><div><h1>Data Entry</h1><p>Enter actual laboratory observations. Calculations are automatic.</p></div><a class="outline-btn" href="{{url_for('export')}}">⇩ Export Excel</a></div>
+<div class="filter"><form><select name="mix"><option value="">All Mixes</option>{% for m in mixes %}<option value="{{m.id}}" {% if mix_filter==m.id %}selected{% endif %}>{{m.id}} — {{m.scba}}% SCBA — {{m.molarity}}</option>{% endfor %}</select>
+<select name="temp"><option value="">All Temperatures</option>{% for t in temps %}<option value="{{t}}" {% if temp_filter==t|string %}selected{% endif %}>{{t}}°C</option>{% endfor %}</select><button class="outline-btn">Filter</button></form></div>
+<div class="entry-list">
+{% for r in rows %}{% if (not mix_filter or r.mix_id==mix_filter) and (not temp_filter or r.temp|string==temp_filter) %}
+{% set m = mixes | selectattr("id","equalto",r.mix_id) | list | first %}
+{% set mass,res,pct = calc(r) if false else (None,None,None) %}
+<form class="entry panel" method="post" action="{{url_for('save_specimen')}}" enctype="multipart/form-data">
+<input type="hidden" name="id" value="{{r.id}}">
+<div class="entry-top"><div><b>{{r.mix_id}}</b><span>{{r.temp}}°C • Replicate {{r.replicate}}</span></div><label class="status {{'done' if r.status=='Completed' else ''}}">{{r.status}}</label></div>
+<div class="field-grid">
+<label>Test Date<input type="date" name="test_date" value="{{r.test_date or ''}}"></label>
+<label>Pre-fire Mass (g)<input type="number" step="0.01" name="pre_mass" value="{{r.pre_mass or ''}}"></label>
+<label>Post-fire Mass (g)<input type="number" step="0.01" name="post_mass" value="{{r.post_mass or ''}}"></label>
+<label>Failure Load (kN)<input type="number" step="0.01" name="failure_load" value="{{r.failure_load or ''}}"></label>
+<label>28D Baseline (MPa)<input type="number" step="0.01" name="baseline_strength" value="{{r.baseline_strength or ''}}"></label>
+<label>Colour Change<select name="colour_change"><option value="">Select</option><option>No change</option><option>Light</option><option>Moderate</option><option>Severe</option></select></label>
+<label>Cracks<select name="cracks"><option value="">Select</option><option>None</option><option>Fine</option><option>Moderate</option><option>Severe</option></select></label>
+<label>Spalling<select name="spalling"><option value="">Select</option><option>None</option><option>Minor</option><option>Moderate</option><option>Severe</option></select></label>
+<label>Heating Rate<input name="heating_rate" placeholder="e.g. 5°C/min" value="{{r.heating_rate or ''}}"></label>
+<label>Exposure Duration<input name="exposure_duration" placeholder="e.g. 2 h" value="{{r.exposure_duration or ''}}"></label>
+<label>Furnace<input name="furnace" placeholder="Kiln/Furnace ID" value="{{r.furnace or ''}}"></label>
+<label>After-fire Image<input type="file" name="after_image" accept="image/*"></label>
+</div>
+<textarea name="remarks" placeholder="Remarks / visual observations">{{r.remarks or ''}}</textarea>
+<div class="auto"><span>Mass Loss: <b>{% if r.pre_mass is not none and r.post_mass is not none and r.pre_mass %}{{"%.2f"|format((r.pre_mass-r.post_mass)/r.pre_mass*100)}}%{% else %}—{% endif %}</b></span>
+<span>Residual Strength: <b>{% if r.failure_load is not none %}{{"%.2f"|format(r.failure_load/10)}} MPa{% else %}—{% endif %}</b></span>
+<span>Residual Strength %: <b>{% if r.failure_load is not none and r.baseline_strength %}{{"%.2f"|format((r.failure_load/10)/r.baseline_strength*100)}}%{% else %}—{% endif %}</b></span></div>
+<select name="status" class="status-select"><option value="Pending" {% if r.status!="Completed" %}selected{% endif %}>Pending</option><option value="Completed" {% if r.status=="Completed" %}selected{% endif %}>Completed</option></select>
+<button class="save-btn">Save Specimen</button>
+</form>{% endif %}{% endfor %}
+</div>
+{% endblock %}

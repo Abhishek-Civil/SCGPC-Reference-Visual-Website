@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block content %}
+<section class="hero">
+ <div><h1>Welcome to<br><strong>SCGPC Fire Resistance Research Lab</strong></h1><p>Track experiments, analyse results, and contribute to sustainable construction.</p></div>
+ <div class="hero-note">🌿<br><em>“Turning Waste into<br>a Stronger, Greener Future”</em></div>
+</section>
+<div class="cards">
+ <div class="stat"><i>◇</i><div><b>12</b><span>Total Mixes</span><small>(M0 – M11)</small></div></div>
+ <div class="stat"><i>🔥</i><div><b>4</b><span>Fire Temperatures</span><small>200°C, 400°C, 600°C, 800°C</small></div></div>
+ <div class="stat"><i>🧪</i><div><b>{{total}}</b><span>Total Specimens</span><small>12 mixes × 3 reps × 4 temp</small></div></div>
+ <div class="stat"><i>✓</i><div><b>{{completed}}</b><span>Completed</span><small>({{"%.1f"|format(pct)}}%)</small></div></div>
+ <div class="stat"><i>⌛</i><div><b>{{remaining}}</b><span>Remaining</span><small>({{"%.1f"|format(100-pct)}}%)</small></div></div>
+</div>
+<div class="two">
+ <section class="panel progress-panel"><div class="section-title"><h2>Experiment Progress</h2><span>LIVE</span></div>
+  <div class="donut" style="--p:{{pct}}"><div>{{"%.1f"|format(pct)}}%</div></div>
+  <div class="legend"><span>● Completed {{completed}}</span><span>● Remaining {{remaining}}</span><span>● Total {{total}}</span></div>
+ </section>
+ <section class="panel"><div class="section-title"><h2>Progress by Temperature</h2></div>
+ {% for t in temps %}<div class="temp-row"><b>{{t}}°C</b><div class="track"><i style="width:{{bytemp[t]/36*100}}%"></i></div><span>{{bytemp[t]}} / 36</span></div>{% endfor %}
+ </section>
+</div>
+<section class="panel"><div class="section-title"><h2>Mix-wise Completion Matrix</h2><span>M0 → M11</span></div>
+<div class="table-wrap"><table class="matrix"><thead><tr><th>Mix</th><th>200°C</th><th>400°C</th><th>600°C</th><th>800°C</th><th>Progress</th></tr></thead>
+<tbody>{% for m in mixes %}<tr><td><b>{{m.id}}</b><small>{{m.scba}}% SCBA • {{m.molarity}}</small></td>
+{% for t in temps %}<td><a class="cell-link" href="{{url_for('data_entry')}}?mix={{m.id}}&temp={{t}}">{{bytemp[t] if false else "View"}}</a></td>{% endfor %}
+<td><b>{{bymix[m.id]}} / 12</b></td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}
